@@ -7,16 +7,19 @@ resource "azurerm_firewall_network_rule_collection" "firewall_network_rule_colle
   priority            = each.value.priority
   resource_group_name = each.value.resource_group_name
 
-  rule {
-    description           = each.value.rule.description
-    destination_addresses = each.value.rule.destination_addresses
-    destination_fqdns     = each.value.rule.destination_fqdns
-    destination_ip_groups = each.value.rule.destination_ip_groups
-    destination_ports     = each.value.rule.destination_ports
-    name                  = each.value.rule.name
-    protocols             = each.value.rule.protocols
-    source_addresses      = each.value.rule.source_addresses
-    source_ip_groups      = each.value.rule.source_ip_groups
+  dynamic "rule" {
+    for_each = each.value.rule
+    content {
+      description           = rule.value.description
+      destination_addresses = rule.value.destination_addresses
+      destination_fqdns     = rule.value.destination_fqdns
+      destination_ip_groups = rule.value.destination_ip_groups
+      destination_ports     = rule.value.destination_ports
+      name                  = rule.value.name
+      protocols             = rule.value.protocols
+      source_addresses      = rule.value.source_addresses
+      source_ip_groups      = rule.value.source_ip_groups
+    }
   }
 }
 

@@ -25,7 +25,7 @@ EOT
     name                = string
     priority            = number
     resource_group_name = string
-    rule = object({
+    rule = list(object({
       description           = optional(string)
       destination_addresses = optional(list(string))
       destination_fqdns     = optional(list(string))
@@ -35,7 +35,15 @@ EOT
       protocols             = list(string)
       source_addresses      = optional(list(string))
       source_ip_groups      = optional(list(string))
-    })
+    }))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_network_rule_collections : (
+        length(v.rule) >= 1
+      )
+    ])
+    error_message = "Each rule list must contain at least 1 items"
+  }
 }
 
